@@ -8,7 +8,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
 
-//    id("elect86.magik") version "0.2.0"
+    //    id("elect86.magik") version "0.2.0"
     `maven-publish`
 
     application
@@ -30,8 +30,8 @@ application {
 
 dependencies {
 
-//    implementation("com.github.ajalt.mordant:mordant:2.0.0-beta2")
-//    implementation("com.github.ajalt.mordant:mordant-jvm:2.0.0-beta2")
+    //    implementation("com.github.ajalt.mordant:mordant:2.0.0-beta2")
+    //    implementation("com.github.ajalt.mordant:mordant-jvm:2.0.0-beta2")
 
     // Align versions of all Kotlin components
     implementation(platform(kotlin("bom", embeddedKotlinVersion)))
@@ -41,12 +41,18 @@ dependencies {
 
     // Use the Kotlin test library.
     testImplementation(kotlin("test"))
+    testImplementation(kotlin("reflect"))
 
     // Use the Kotlin JUnit integration.
     //    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
+val a by tasks.creating
+
+
 tasks {
+    val b by creating
+    b
     test { useJUnitPlatform() }
 }
 //

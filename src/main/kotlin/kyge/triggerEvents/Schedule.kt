@@ -8,13 +8,15 @@ interface Schedule {
 
     /** crontab.guru */
     fun schedule(block: Cron.() -> Unit) {
+        builder += "schedule:"
         indent {
-            builder += """schedule:"""
-            indent {
-                Cron.apply(block)
-            }
+            Cron.apply(block)
         }
     }
+
+    var schedule: String
+        @Deprecated(message = "Write only property", level = DeprecationLevel.HIDDEN) get() = error("")
+        set(value) = schedule { cron = value }
 
     object Cron {
         var cron: String

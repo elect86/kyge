@@ -22,8 +22,14 @@ object uploadArtifact {
 
             fun String.to(vararg paths: String) {
                 builder += "name: $this"
-                builder.appendMultiLine("path:", *paths)
+                "path:".appendMultiLine(*paths)
             }
+
+            var path: String
+                @Deprecated(message = "Write only property", level = DeprecationLevel.HIDDEN) get() = error("")
+                set(value) {
+                    builder += "path: $value"
+                }
 
             var onFileNotFound: Policy
                 @Deprecated(message = "Write only property", level = DeprecationLevel.HIDDEN) get() = error("")

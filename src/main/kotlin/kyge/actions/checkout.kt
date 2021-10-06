@@ -5,7 +5,13 @@ import kyge.builder
 
 object checkout {
 
-    val v2 = V2
+    val v2: V2
+        get() {
+            bulletPoint {
+                builder += "uses: actions/${V2.actionNameVersioned}"
+            }
+            return V2
+        }
 
     object V2 : Step(), Action<V2.Builder> {
 

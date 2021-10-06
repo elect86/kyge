@@ -3,12 +3,10 @@ package kyge
 import kotlin.String
 
 @JvmInline
-value class Expression(val value: String)
+value class Expression(val value: String) {
+    infix fun `&&`(exp: Expression) = Expression("$value && $exp")
 
-fun `if`(predicate: () -> Expression, block: Job.Builder.() -> Unit) {
-    val jobBuilder = Job.Builder()
-    jobBuilder.condition = "if: ${predicate().value}"
-    jobBuilder.block()
+    override fun toString() = value
 }
 
 interface ExpA

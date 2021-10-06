@@ -39,20 +39,12 @@ object github : Context<github> {
 
         override val name = "event"
 
-        class Input {
-            lateinit var id: String
-            lateinit var description: String
-            var required = true
-            lateinit var default: String
-
-            override fun toString() = "\${{ github.event.inputs.$id }}"
-        }
-
+        // TODO delete/move?
         class Output {
             lateinit var id: String
             lateinit var description: String
 
-            override fun toString() = "\${{ github.event.output.$id }}"
+            override fun toString() = "github.event.output.$id".ref
         }
 
         val inputs = ArrayList<Input>()
@@ -176,6 +168,8 @@ abstract class Property<Type>(val ctx: Context<*>) {
         //        }
         var b = string
         prefix?.let { b = "$it$string" }
-        return Expression("\${{ ${ctx.name}.$name == '$b' }}")
+        return Expression("${ctx.name}.$name == '$b'")
     }
+
+    override fun toString() = "${ctx.name}.$name".ref
 }

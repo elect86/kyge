@@ -1,13 +1,16 @@
 package kyge
 
-import kyge.actions.checkout
 import java.io.File
+import kotlin.properties.PropertyDelegateProvider
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 import kotlin.text.StringBuilder
 
 internal lateinit var file: File
 internal var indentation = 0
 internal val builder = StringBuilder()
 internal var skipIndentation = false
+internal var bulletPoint: Boolean? = null
 
 fun String.yml(block: Workflow.() -> Unit) {
     file = File("$this.yml")
@@ -28,18 +31,32 @@ fun indent(block: () -> Unit) {
     indentation -= 2
 }
 
+fun bulletPoint(block: () -> Unit) {
+    bulletPoint = true
+    //    indent {
+    block()
+    //    }
+    bulletPoint = null
+}
+
 operator fun StringBuilder.plusAssign(string: String) {
-    if (!skipIndentation)
-        append(" ".repeat(indentation))
-    else
-        skipIndentation = false
+    append(" ".repeat(indentation))
+    bulletPoint?.let {
+        append(when {
+                   it -> {
+                       bulletPoint = false
+                       "- "
+                   }
+                   else -> "  "
+               })
+    }
     appendLine(string)
 }
 
-fun StringBuilder.appendMultiLine(name: String, vararg strings: String) {
-    val indent = " ".repeat(indentation)
-    builder.appendLine("$indent$name |")
+fun String.appendMultiLine(vararg strings: String) {
     indent {
+        val indent = " ".repeat(indentation)
+        builder.appendLine("$indent$this |")
         for (s in strings)
             builder += s
     }
@@ -48,20 +65,8 @@ fun StringBuilder.appendMultiLine(name: String, vararg strings: String) {
 @DslMarker
 annotation class KygeMarker
 
-interface Action<T> {
-    val actionName: String
-    val actionVersion: String
-    val t: T
+val String.singleQuote: Boolean
+    get() = first() == '*' || any { !it.isLetterOrDigit() && it != '.' && it != '*' }
 
-    //    interface Builder
-    operator fun invoke(block: T.() -> Unit) {
-        builder += "- uses: actions/$actionName@$actionVersion"
-        indent {
-            checkout.v2
-            builder += "with:"
-            indent {
-                t.block()
-            }
-        }
-    }
-}
+val String.ref: String
+    get() = "\${{ $this }}"
